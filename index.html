@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="todo2.js" defer></script>
+  <link rel="stylesheet" href="todolist.css">
+</head>
+<body>
+  <h1 class=" mt-[100px] mb-[20px] font-3rem font-bold uppercase text-center text-[var(--accent-color)]">Todo App</h1>
+  <div>
+      <form action="" class="relative">
+          <input  class=" relative focus:outline-none p-[12px_20px] w-[100%] border-2 border-[var(--secondary-color)] text-inherit text-[var(--text-color)] rounded-xl bg-transparent box-border caret-[var(--accent-color)]" id="todo-input" type="text" placeholder="Type anything to add to the list" autocomplete="off">
+          <button id="add-button" class="absolute t-0 r-0 h-[100%] p-[0_30px] rounded-full font-inherit font-bold bg-[var(--accent-color)] text-[var(--background-color)] cursor-pointer">ADD</button>
+      </form>
+      <ul id="todo-list" class="mt-[20px] p-[0_16px] bg-[var(--primary-color)] rounded-[15px] flex justify-center items-left flex-col space-y-7">
+        <!-- <li class="flex items-center">
+          <input class="peer h-[20px] border border-[var(--accent-color)] text-center" type="checkbox" id="todo-1">
+          <label for="todo-1">Done</label>
+          <label for="todo-1" class="pl-[15px] flex-grow peer-checked:line-through ">webdev project with html and css</label>
+          <button class="py-3 px-2 rounded-lg text-[var(--accent-color)] bg-transparent outline-none hover:text-red-700 transition-all duration-500 peer-checked:text-[var(--accent-color)]">
+            Delete
+          </button>
+        </li> -->
+      </ul>
+      
+  </div>
+ 
+</body>
+</html>
