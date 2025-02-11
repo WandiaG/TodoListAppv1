@@ -1,0 +1,33 @@
+:root{
+    --background-color: #101114;
+    --primary-color: #1C1D20;
+    --secondary-color: #4A4D57;
+    --accent-color: #00FFC4;
+    --text-color: #F9F9F9;
+}
+*{
+    margin: 0; 
+    padding: 0;
+}
+
+html{
+    font-size: 16pt;
+    color: var(--text-color);
+    font-family: serif;
+}
+body{
+    min-height: 100vh;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--background-color);
+}
+.container{
+    width: 700px;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+}
