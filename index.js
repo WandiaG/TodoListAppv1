@@ -1,15 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
     setDateToToday(); // Set the date input to today
 
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    var storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
     if (storedTasks.length) {
-        storedTasks.forEach((task) => tasks.push(task));
+        storedTasks.forEach(function (task) {
+            tasks.push(task);
+        });
         updateTaskList();
         updateStats();
     }
 
-    const dateInput = document.getElementById("date-time");
-    dateInput.addEventListener("change", () => {
+    var dateInput = document.getElementById("date-time");
+    dateInput.addEventListener("change", function () {
         updateTaskList();
         updateStats();
     }); // Update task list and stats when date changes
@@ -18,24 +20,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("next-page").addEventListener("click", nextPage);
 });
 
-
-let currentPage = 1;
-const tasksPerPage = 5;
+var currentPage = 1;
+var tasksPerPage = 5;
 
 function setDateToToday() {
-    const dateInput = document.getElementById("date-time");
-    const today = new Date().toISOString().split('T')[0];
+    var dateInput = document.getElementById("date-time");
+    var today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 }
 
-const tasks = [];
+var tasks = [];
 
 function saveTask() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-const addNewTask = document.getElementById("add-task");
-addNewTask.addEventListener("click", (e) => {
+var addNewTask = document.getElementById("add-task");
+addNewTask.addEventListener("click", function (e) {
     e.preventDefault();
     addATask();
 });
@@ -48,7 +49,7 @@ function deleteTask(index) {
 }
 
 function editTask(index) {
-    const taskInput = document.getElementById("task-input");
+    var taskInput = document.getElementById("task-input");
     taskInput.value = tasks[index].text;
     tasks.splice(index, 1);
     updateTaskList();
@@ -57,25 +58,29 @@ function editTask(index) {
 }
 
 function updateStats() {
-    const selectedDate = document.getElementById("date-time").value;
-    const filteredTasks = selectedDate 
-        ? tasks.filter(task => new Date(task.date).toISOString().split('T')[0] === selectedDate) 
+    var selectedDate = document.getElementById("date-time").value;
+    var filteredTasks = selectedDate 
+        ? tasks.filter(function (task) {
+            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
+        }) 
         : tasks;
 
-    const taskCompleted = filteredTasks.filter(task => task.complete).length;
-    const totalTasks = filteredTasks.length;
-    const progress = totalTasks > 0 ? (taskCompleted / totalTasks) * 100 : 0;
+    var taskCompleted = filteredTasks.filter(function (task) {
+        return task.complete;
+    }).length;
+    var totalTasks = filteredTasks.length;
+    var progress = totalTasks > 0 ? (taskCompleted / totalTasks) * 100 : 0;
 
-    const progressBar = document.getElementById('progress');
-    progressBar.style.width = `${progress}%`;
+    var progressBar = document.getElementById('progress');
+    progressBar.style.width = progress + '%';
 
-    document.getElementById('numbers').innerText = `${taskCompleted} / ${totalTasks}`;
+    document.getElementById('numbers').innerText = taskCompleted + ' / ' + totalTasks;
 }
 
 function addATask() {
-    const currentDate = new Date().toLocaleDateString();
-    const inputTask = document.getElementById("task-input");
-    const task = inputTask.value;
+    var currentDate = new Date().toLocaleDateString();
+    var inputTask = document.getElementById("task-input");
+    var task = inputTask.value;
     
     if (task.length > 0) {
         tasks.push({ text: task, complete: false, date: currentDate });
@@ -87,20 +92,22 @@ function addATask() {
 }
 
 function updateTaskList() {
-    const taskslist = document.getElementById("task-UL");
+    var taskslist = document.getElementById("task-UL");
     taskslist.innerHTML = "";
 
-    const selectedDate = document.getElementById("date-time").value;
-    const filteredTasks = selectedDate 
-        ? tasks.filter(task => new Date(task.date).toISOString().split('T')[0] === selectedDate) 
+    var selectedDate = document.getElementById("date-time").value;
+    var filteredTasks = selectedDate 
+        ? tasks.filter(function (task) {
+            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
+        }) 
         : tasks;
 
-    const start = (currentPage - 1) * tasksPerPage;
-    const end = start + tasksPerPage;
-    const paginatedTasks = filteredTasks.slice(start, end);
+    var start = (currentPage - 1) * tasksPerPage;
+    var end = start + tasksPerPage;
+    var paginatedTasks = filteredTasks.slice(start, end);
 
-    paginatedTasks.forEach((task, index) => {
-        const taskItem = document.createElement("li");
+    paginatedTasks.forEach(function (task, index) {
+        var taskItem = document.createElement("li");
         taskItem.className = "flex items-center justify-between gap-3";
         taskItem.innerHTML = `
             <input class="peer flex items-center justify-evenly gap-2" type="checkbox" name="checkbox-item" id="checkbox-item-${start + index}">
@@ -112,9 +119,9 @@ function updateTaskList() {
             </div>
         `;
 
-        const checkbox = taskItem.querySelector(`#checkbox-item-${start + index}`);
+        var checkbox = taskItem.querySelector("#checkbox-item-" + (start + index));
         checkbox.checked = task.complete;
-        checkbox.addEventListener('change', () => {
+        checkbox.addEventListener('change', function () {
             task.complete = checkbox.checked;
             if (checkbox.checked) {
                 taskItem.querySelector("label[for='checkbox-item-"+(start + index)+"']").classList.add("line-through", "text-green-500");
@@ -137,12 +144,14 @@ function prevPage() {
 }
 
 function nextPage() {
-    const selectedDate = document.getElementById("date-time").value;
-    const filteredTasks = selectedDate 
-        ? tasks.filter(task => new Date(task.date).toISOString().split('T')[0] === selectedDate) 
+    var selectedDate = document.getElementById("date-time").value;
+    var filteredTasks = selectedDate 
+        ? tasks.filter(function (task) {
+            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
+        }) 
         : tasks;
 
-    const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+    var totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
     if (currentPage < totalPages) {
         currentPage++;
         updateTaskList();
