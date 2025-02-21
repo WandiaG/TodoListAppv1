@@ -1,159 +1,78 @@
-document.addEventListener('DOMContentLoaded', function () {
-    setDateToToday(); // Set the date input to today
+const todoForm = document.querySelector("form");
+const todoInput = document.getElementById("todo-input");
+const todoUL = document.getElementById('todo-list');
 
-    var storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    if (storedTasks.length) {
-        storedTasks.forEach(function (task) {
-            tasks.push(task);
-        });
-        updateTaskList();
-        updateStats();
-    }
+let allTodos = getTodos();
+updateTodoList();
 
-    var dateInput = document.getElementById("date-time");
-    dateInput.addEventListener("change", function () {
-        updateTaskList();
-        updateStats();
-    }); // Update task list and stats when date changes
-
-    document.getElementById("prev-page").addEventListener("click", prevPage);
-    document.getElementById("next-page").addEventListener("click", nextPage);
-});
-
-var currentPage = 1;
-var tasksPerPage = 5;
-
-function setDateToToday() {
-    var dateInput = document.getElementById("date-time");
-    var today = new Date().toISOString().split('T')[0];
-    dateInput.value = today;
-}
-
-var tasks = [];
-
-function saveTask() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-var addNewTask = document.getElementById("add-task");
-addNewTask.addEventListener("click", function (e) {
+todoForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    addATask();
+    addTodos();
 });
 
-function deleteTask(index) {
-    tasks.splice(index, 1);
-    updateTaskList();
-    updateStats();
-    saveTask();
-}
-
-function editTask(index) {
-    var taskInput = document.getElementById("task-input");
-    taskInput.value = tasks[index].text;
-    tasks.splice(index, 1);
-    updateTaskList();
-    updateStats();
-    saveTask();
-}
-
-function updateStats() {
-    var selectedDate = document.getElementById("date-time").value;
-    var filteredTasks = selectedDate 
-        ? tasks.filter(function (task) {
-            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
-        }) 
-        : tasks;
-
-    var taskCompleted = filteredTasks.filter(function (task) {
-        return task.complete;
-    }).length;
-    var totalTasks = filteredTasks.length;
-    var progress = totalTasks > 0 ? (taskCompleted / totalTasks) * 100 : 0;
-
-    var progressBar = document.getElementById('progress');
-    progressBar.style.width = progress + '%';
-
-    document.getElementById('numbers').innerText = taskCompleted + ' / ' + totalTasks;
-}
-
-function addATask() {
-    var currentDate = new Date().toLocaleDateString();
-    var inputTask = document.getElementById("task-input");
-    var task = inputTask.value;
-    
-    if (task.length > 0) {
-        tasks.push({ text: task, complete: false, date: currentDate });
+function addTodos() {
+    const todoText = todoInput.value.trim();
+    if (todoText.length > 0) {
+        const todoObject = {
+            text: todoText,
+            completed: false
+        }
+        allTodos.push(todoObject);
+        updateTodoList();
+        saveTodos();
+        todoInput.value = "";
     }
-    inputTask.value = "";
-    updateTaskList();
-    updateStats();
-    saveTask();
 }
 
-function updateTaskList() {
-    var taskslist = document.getElementById("task-UL");
-    taskslist.innerHTML = "";
-
-    var selectedDate = document.getElementById("date-time").value;
-    var filteredTasks = selectedDate 
-        ? tasks.filter(function (task) {
-            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
-        }) 
-        : tasks;
-
-    var start = (currentPage - 1) * tasksPerPage;
-    var end = start + tasksPerPage;
-    var paginatedTasks = filteredTasks.slice(start, end);
-
-    paginatedTasks.forEach(function (task, index) {
-        var taskItem = document.createElement("li");
-        taskItem.className = "flex items-center justify-between gap-3";
-        taskItem.innerHTML = `
-            <input class="peer flex items-center justify-evenly gap-2" type="checkbox" name="checkbox-item" id="checkbox-item-${start + index}">
-            <label class="flex flex-grow items-center justify-left peer-checked:line-through peer-checked:text-green-500" for="checkbox-item-${start + index}">${task.text}</label>
-            <label for="date">${task.date}</label>
-            <div class="flex items-center justify-center flex-col">
-                <button onclick="editTask(${start + index})"> <i class="fa-solid fa-pen text-green-500"></i> </button>
-                <button onclick="deleteTask(${start + index})"> <i class="fa-solid fa-trash-can text-[var(--pink-color)]"></i> </button>
-            </div>
-        `;
-
-        var checkbox = taskItem.querySelector("#checkbox-item-" + (start + index));
-        checkbox.checked = task.complete;
-        checkbox.addEventListener('change', function () {
-            task.complete = checkbox.checked;
-            if (checkbox.checked) {
-                taskItem.querySelector("label[for='checkbox-item-"+(start + index)+"']").classList.add("line-through", "text-green-500");
-            } else {
-                taskItem.querySelector("label[for='checkbox-item-"+(start + index)+"']").classList.remove("line-through", "text-green-500");
-            }
-            saveTask();
-            updateStats();
-        });
-
-        taskslist.append(taskItem);
+function updateTodoList() {
+    todoUL.innerHTML = ""; // Corrected variable name
+    allTodos.forEach((todo, todoIndex) => {
+        const todoItem = createTodoItem(todo, todoIndex); // Added let declaration
+        todoUL.append(todoItem);
     });
 }
 
-function prevPage() {
-    if (currentPage > 1) {
-        currentPage--;
-        updateTaskList();
-    }
+function createTodoItem(todo, todoIndex) {
+    const todoLI = document.createElement('li');
+    const todoText = todo.text;
+    todoLI.className = "todo"
+    todoLI.innerHTML = `<li class="flex items-center justify-center">
+    <input class="peer h-[20px] border border-[var(--accent-color)] text-center" type="checkbox" id="${todoIndex}">
+    <label for="${todoIndex}">Done</label>
+    <label for="${todoIndex}" class="pl-[15px] flex-grow peer-checked:line-through ">${todoText}</label>
+    <button class="delete-button py-3 px-2 rounded-lg text-[var(--accent-color)] bg-transparent outline-none hover:text-red-700 transition-all duration-500 peer-checked:text-[var(--accent-color)]">
+      Delete
+    </button>
+  </li>`
+
+  const deleteButton = todoLI.querySelector(".delete-button");
+        deleteButton.addEventListener("click", ()=> {
+        deleteTodoItem(todoIndex);
+  })
+
+  const checkbox = todoLI.querySelector("input");
+  checkbox.addEventListener("change", ()=> {
+      allTodos[todoIndex].completed = checkbox.checked
+      saveTodos();
+  })
+    checkbox.checked = todo.completed;
+    return todoLI;
 }
 
-function nextPage() {
-    var selectedDate = document.getElementById("date-time").value;
-    var filteredTasks = selectedDate 
-        ? tasks.filter(function (task) {
-            return new Date(task.date).toISOString().split('T')[0] === selectedDate;
-        }) 
-        : tasks;
+function deleteTodoItem(todoIndex) {
+    allTodos = allTodos.filter((_, i) => i !== todoIndex);
+    saveTodos();
+    updateTodoList();
+}
 
-    var totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        updateTaskList();
-    }
+
+
+function saveTodos(){
+    const todosJson = JSON.stringify(allTodos);
+    localStorage.setItem("todos", todosJson);
+}
+
+function getTodos () {
+    const todos = localStorage.getItem("todos") || "[]";
+    return JSON.parse(todos);
 }
